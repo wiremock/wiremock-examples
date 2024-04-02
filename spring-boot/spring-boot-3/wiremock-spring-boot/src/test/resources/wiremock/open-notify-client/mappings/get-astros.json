@@ -1,0 +1,30 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/astros.json"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "people": [
+        {
+          "name": "Mark Vande Hei",
+          "craft": "ISS"
+        },
+        {
+          "name": "Oleg Novitskiy",
+          "craft": "ISS"
+        },
+        {
+          "name": "Pyotr Dubrov",
+          "craft": "ISS"
+        }
+      ],
+      "number": 3,
+      "message": "success"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
