@@ -2,3 +2,4 @@ rootProject.name = 'wiremock-examples'
 
 include 'spring-boot:spring-boot-2'
 include 'spring-boot:spring-boot-3:wiremock-spring-boot'
+include 'spring-boot:spring-boot-3:wiremock-jetty-12'
