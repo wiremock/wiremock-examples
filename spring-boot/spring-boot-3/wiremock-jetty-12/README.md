@@ -8,13 +8,13 @@ The jetty 12 library can be introduced as a dependency in the `pom.xml` file:
 <dependency>
     <groupId>org.wiremock</groupId>
     <artifactId>wiremock-jetty12</artifactId>
-    <version>3.5.2</version>
+    <version>3.6.0</version>
 </dependency>
 ```
 or in the `build.gradle` file:
 
 ```groovy
-testImplementation 'org.wiremock:wiremock-jetty12:3.5.2'
+testImplementation 'org.wiremock:wiremock-jetty12:3.6.0'
 ```
 
 WireMock can then be used in your tests as follows:
