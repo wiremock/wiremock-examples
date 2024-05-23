@@ -1,5 +1,5 @@
 ext {
-    wiremockVersion = '3.5.4'
+    wiremockVersion = '3.6.0'
     springBootVersion = '3.2.5'
     springDependencyManagementVersion = '1.1.4'
 }
