@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  conversion-rates-api:
+    image: conversion-rates-api:1.0
+    ports:
+      - "8080:8080"

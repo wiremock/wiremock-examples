@@ -1,0 +1,1 @@
+# Wiremock as Testcontainers Proxy Example
