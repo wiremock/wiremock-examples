@@ -1,7 +1,14 @@
 package etr.learning.moneyexchange;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import etr.learning.moneyexchange.MoneyExchangeApp.ExchangeCalculator;
+import java.io.File;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -10,11 +17,6 @@ import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.io.File;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @WireMockTest(httpPort = IntegrationTest.WIREMOCK_PORT)
@@ -29,25 +31,14 @@ class IntegrationTest {
       new File("src/test/resources/compose-test.yml"))
       .withExposedService("conversion-rates-api", 8080,
           Wait.forHttp("/currencies").forStatusCode(200))
-      .withOptions("--compatibility")
       .withLocalCompose(true);
-
-  static String testcontainerUrl;
-
-  @BeforeAll
-  static void beforeAll() {
-    testcontainerUrl = "http://%s:%s".formatted(
-        env.getServiceHost("conversion-rates-api", 8080),
-        env.getServicePort("conversion-rates-api", 8080)
-    );
-  }
 
   @Test
   void shouldReturnOkForTheHappyFlow() {
     // given
     stubFor(get(urlMatching("/currencies/.*"))
         .willReturn(aResponse()
-            .proxiedFrom(testcontainerUrl)));
+            .proxiedFrom(testcontainerUrl())));
     // when
     var okResponse = exchange.toEuro(100.00, "USD");
 
@@ -63,7 +54,7 @@ class IntegrationTest {
     // given
     stubFor(get(urlMatching("/currencies/.*"))
         .willReturn(aResponse()
-            .proxiedFrom(testcontainerUrl)));
+            .proxiedFrom(testcontainerUrl())));
 
     stubFor(get(urlMatching("/currencies/GBP"))
         .willReturn(aResponse()
@@ -83,7 +74,7 @@ class IntegrationTest {
     // given
     stubFor(get(urlMatching("/currencies/.*"))
         .willReturn(aResponse()
-            .proxiedFrom(testcontainerUrl)));
+            .proxiedFrom(testcontainerUrl())));
 
     stubFor(get(urlMatching("/currencies/RON"))
         .willReturn(aResponse()
@@ -95,6 +86,10 @@ class IntegrationTest {
     // then
     assertThat(slowResponse.getStatusCode())
         .isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+  }
+
+  static String testcontainerUrl() {
+    return "http://localhost:" + env.getServicePort("conversion-rates-api", 8080);
   }
 
 }
