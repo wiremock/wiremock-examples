@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import etr.learning.moneyexchange.MoneyExchangeApp.ExchangeCalculator;
 import java.io.File;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +57,7 @@ class IntegrationTest {
 
     stubFor(get(urlMatching("/currencies/GBP"))
         .willReturn(aResponse()
-            .withBody("Wrong response, definitely not a number!")));
+            .withBody("Wrong response, definitely not a valid response!")));
     // when
     var nokResponse = exchange.toEuro(100.00, "GBP");
 

@@ -77,7 +77,6 @@ As we can see, Testcontainers' DockerComposeContainer enables us to test the _Ex
 
 ### 4. Using WireMock as a Proxy
 
-
 We have successfully tested the client's happy flow. However, it's crucial to test various scenarios, including network failures, latency, and timeouts.
 
 To accomplish this, we can use [_wiremock-standalone_](https://mvnrepository.com/artifact/org.wiremock/wiremock-standalone) and configure it as a proxy. Let's add this dependency to our project:
@@ -131,3 +130,54 @@ void shouldReturnOkForTheHappyFlow() {
     .containsExactly(HttpStatus.OK, "Exchanging 100.0 USD at a rate of 0.92 will give you 92.0 EUR");
 }
 ```
+
+### 5. Injecting Failures and Delays
+
+**The advantage of this setup is that we can use the proxy to inject failures and artificial delays into the proxied server's responses.**
+
+For instance, we can deliberately return an incorrect response for a specific currency. Let's set up a test to redirect all API calls, except for those requesting the conversion rate for "GBP":
+
+```java
+@Test
+void shouldReturnServerErrorWhenRequestFails() {
+  stubFor(get(urlMatching("/currencies/.*"))
+    .willReturn(aResponse()
+      .proxiedFrom(testcontainerUrl())));
+  
+  stubFor(get(urlMatching("/currencies/GBP"))
+    .willReturn(aResponse()
+      .withBody("Wrong response, definitely not a valid response!")));
+
+  var nokResponse = exchange.toEuro(100.00, "GBP");
+
+  assertThat(nokResponse)
+      .extracting(ResponseEntity::getStatusCode, ResponseEntity::getBody)
+      .containsExactly(HttpStatus.INTERNAL_SERVER_ERROR, "Ooops! There was an error oun our side!");
+}
+```
+
+Additionally, let's add a test to ensure the client application times out if the response takes longer than two seconds. We can achieve this by introducing a three-second delay before returning the proxied answer:
+
+```java
+@Test
+void shouldReturnGatewayTimeoutWhenRequestIsTooSlow() {
+  stubFor(get(urlMatching("/currencies/.*"))
+    .willReturn(aResponse()
+      .proxiedFrom(testcontainerUrl())));
+
+  stubFor(get(urlMatching("/currencies/RON"))
+    .willReturn(aResponse()
+      .withFixedDelay(3_000)
+      .withBody("Wrong response, definitely not a number!")));
+
+  var slowResponse = exchange.toEuro(100.00, "RON");
+
+  assertThat(slowResponse.getStatusCode())
+      .isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+}
+```
+
+### 6. Conclusion
+
+In this example, we learned how to use _Testcontainers_ to spin up containers from a Docker Compose file and integrate them into our tests. We then used _WireMock_ to proxy the calls to these containers, allowing us to inject failures and artificial delays. This enabled us to test a wide variety of scenarios.
+
