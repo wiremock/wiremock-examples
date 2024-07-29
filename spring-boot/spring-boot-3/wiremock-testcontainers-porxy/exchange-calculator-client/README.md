@@ -114,8 +114,7 @@ class IntegrationTest {
 ```
 Next, we'll update our test by instantiating the _ExchangeCalculator_ object with the WireMock URL. **We'll also configure WireMock to stub the requests for fetching currencies and proxy the calls to the underlying service provided through Testcontainers**:
 ```java
-private final ExchangeCalculator exchange = new ExchangeCalculator(
-    "http://localhost:" + WIREMOCK_PORT);
+ExchangeCalculator exchange = new ExchangeCalculator("http://localhost:" + WIREMOCK_PORT);
 
 @Test
 void shouldReturnOkForTheHappyFlow() {
@@ -168,7 +167,7 @@ void shouldReturnGatewayTimeoutWhenRequestIsTooSlow() {
   stubFor(get(urlMatching("/currencies/RON"))
     .willReturn(aResponse()
       .withFixedDelay(3_000)
-      .withBody("Wrong response, definitely not a number!")));
+      .proxiedFrom(testcontainerUrl())));
 
   var slowResponse = exchange.toEuro(100.00, "RON");
 
@@ -179,5 +178,5 @@ void shouldReturnGatewayTimeoutWhenRequestIsTooSlow() {
 
 ### 6. Conclusion
 
-In this example, we learned how to use _Testcontainers_ to spin up containers from a Docker Compose file and integrate them into our tests. We then used _WireMock_ to proxy the calls to these containers, allowing us to inject failures and artificial delays. This enabled us to test a wide variety of scenarios.
+In this example, we learned how to use Testcontainers to spin up containers from a Docker Compose file and integrate them into our tests. We then used WireMock to proxy the calls to these containers, allowing us to inject failures and artificial delays. This enabled us to test a wide variety of scenarios.
 

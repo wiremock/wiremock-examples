@@ -22,8 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class IntegrationTest {
 
   static final int WIREMOCK_PORT = 1234;
-  private final ExchangeCalculator exchange = new ExchangeCalculator(
-      "http://localhost:" + WIREMOCK_PORT);
+  private final ExchangeCalculator exchange = new ExchangeCalculator("http://localhost:" + WIREMOCK_PORT);
 
   @Container
   static DockerComposeContainer<?> env = new DockerComposeContainer<>(
@@ -78,7 +77,7 @@ class IntegrationTest {
     stubFor(get(urlMatching("/currencies/RON"))
         .willReturn(aResponse()
             .withFixedDelay(3_000)
-            .withBody("Wrong response, definitely not a number!")));
+            .proxiedFrom(testcontainerUrl())));
     // when
     var slowResponse = exchange.toEuro(100.00, "RON");
 
