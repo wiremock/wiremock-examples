@@ -1,0 +1,5 @@
+
+server.port: 8081
+
+conversion-rates-api:
+  base-url: http://localhost:8080
