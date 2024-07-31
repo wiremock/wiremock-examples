@@ -26,7 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation "org.wiremock:wiremock-standalone:${wiremockStandaloneVersion}"
+    testImplementation "org.wiremock:wiremock-standalone:${wiremockVersion}"
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
 }
