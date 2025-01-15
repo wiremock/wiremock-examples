@@ -21,7 +21,6 @@ dependencies {
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.wiremock.integrations:wiremock-spring-boot:3.3.0'
-//	testImplementation 'com.maciejwalkowiak.spring:wiremock-spring-boot:2.1.2'
 }
 
 tasks.named('test') {
