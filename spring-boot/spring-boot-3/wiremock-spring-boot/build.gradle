@@ -20,7 +20,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.wiremock.integrations:wiremock-spring-boot:3.3.0'
+	testImplementation 'org.wiremock.integrations:wiremock-spring-boot:4.0.6'
 }
 
 tasks.named('test') {
